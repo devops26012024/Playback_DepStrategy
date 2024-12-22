@@ -1,7 +1,7 @@
 name: Terraform Versioning and Changelog
 
 on:
-  #push: 
+  workflow_dispatch: 
 
 jobs:  
   version_and_changelog:
