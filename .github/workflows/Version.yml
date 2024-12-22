@@ -2,9 +2,6 @@ name: Terraform Versioning and Changelog
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
 
 jobs:
   version_and_changelog:
@@ -43,10 +40,10 @@ jobs:
 
     - name: Commit and Push Changes
       env:
-        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
       run: |
-        git config user.name "GitHub Actions"
-        git config user.email "actions@github.com"
+        git config user.name "${{ secrets.USERNAME }}"
+        git config user.email "${{ secrets.EMAIL }}"
         git add VERSION CHANGELOG.md
         git commit -m "Version bump to ${{ env.new_version }} with changelog"
-        git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/<your-username>/<your-repo>.git
+        git push
