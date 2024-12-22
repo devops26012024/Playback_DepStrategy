@@ -1,0 +1,46 @@
+name: Terraform Versioning and Changelog
+
+on:
+  push: 
+
+jobs:  
+  version_and_changelog:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.5.0
+
+    - name: Increment Version
+      id: version
+      run: |
+        current_version=$(cat VERSION)
+        new_version=$(echo $current_version | awk -F. '{$NF += 1; OFS="."; print $0}')
+        echo $new_version > VERSION
+        echo "new_version=$new_version" >> $GITHUB_ENV
+
+    - name: Generate Changelog Entry
+      id: changelog
+      run: |
+        if git rev-parse HEAD~1 >/dev/null 2>&1; then
+        changes=$(git diff --name-only HEAD~1 HEAD)
+        #else
+        #changes="Initial commit or no prior changes"
+        fi
+        echo -e "## Version ${{ env.new_version }}\n\n- Changes:\n$changes\n\n" >> CHANGELOG.md
+    - name: Commit and Push Changes
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+      run: |
+        git config user.name "${{ secrets.USERNAME }}"
+        git config user.email "${{ secrets.EMAIL }}"
+        git add VERSION CHANGELOG.md
+        git commit -m "Version bump to ${{ env.new_version }} with changelog"
+        git push
