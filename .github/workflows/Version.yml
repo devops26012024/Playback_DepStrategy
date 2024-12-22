@@ -3,6 +3,10 @@ name: Terraform Versioning and Changelog
 on:
   push:
 
+permissions:
+  id-token: write
+  contents: read   
+
 jobs:
   version_and_changelog:
     runs-on: ubuntu-latest
