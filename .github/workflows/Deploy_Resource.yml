@@ -7,7 +7,7 @@ permissions:
   id-token: write
   contents: read 
 
-jobs:
+jobs: 
   deploy: 
     name: Deploy Terraform
     runs-on: ubuntu-latest
